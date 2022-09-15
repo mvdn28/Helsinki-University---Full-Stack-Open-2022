@@ -3,54 +3,69 @@
 import React from 'react';
 import { useState } from 'react'
 
-const Header=(props)=>{
-  return(
-    <><h1>{props.text}</h1></>
-  )
-}
-const StatisticLine=(props)=>{
-  return(
-    <><p>{props.text}: {props.value}</p></>
-  )
-}
-
-const Statistics=(props)=>{
-  if ((props.good+props.neutral+props.bad)===0){
-    return(<><p>No feedback given</p></>)
-  }else{
-    return(
-      <>
-        <StatisticLine text="good" value ={props.good} />
-        <StatisticLine text="neutral" value ={props.neutral} />
-        <StatisticLine text="bad" value ={props.bad} />
-        <p>average: {(props.good+props.bad)/3}</p>
-        <p>positive: {(props.good)/(props.good+props.bad+props.neutral)*100}%</p>
-      </>
-    )
-  }
-  
-}
-
 const Button = (props) => (
   <button onClick={props.handleClick}>
     {props.text}
   </button>
 )
 
+const Votes=(props)=>(
+  <>
+    <p>has {props.voted} votes</p>
+  </>
+)
+
+const MostVoted=(props)=>{
+  let arr=Object.values(props.vote)
+  let max=Math.max(...arr)
+  let Key=Object.keys(props.vote).find(key => props.vote[key] === max)
+  return(
+    <>
+      <p>{props.anecdotes[Key]}</p>
+      <p>has {max} votes</p>
+    </>
+  )  
+}
+
+
 const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
+  
+  const anecdotes = [
+    'If it hurts, do it more often.',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.'
+  ]
+    
+  const [selected, setSelected] = useState(0)
+  const [vote, setVoted] = useState({0:0,1:0,2:0,3:0,4:0,5:0,6:0})
+  const handleVoteButton=(anec)=>{
+    const copy={
+      ...vote
+    }
+    copy[anec]+=1
+    setVoted(copy)
+  }
+  
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+  
 
   return (
     <div>
-      <Header text="give feedback"/>
-      <Button handleClick={()=> setGood(good+1)} text="good" />
-      <Button handleClick={()=> setNeutral(neutral+1)} text="neutral" />
-      <Button handleClick={()=> setBad(bad+1)} text="bad" />
-      <Header text="statistics"/>
-      <Statistics good={good} bad={bad} neutral={neutral} />
+      <h1>Anecdote of the day</h1>
+      <p>{anecdotes[selected]}</p>
+      <Votes voted={vote[selected]} />
+      <Button handleClick={()=> handleVoteButton(selected)} text="vote" />
+      <Button handleClick={()=> setSelected(getRandomInt(0,6))} text="next anecdote" />
+      <h1>Anecdote of the day</h1>
+      <MostVoted vote={vote} anecdotes={anecdotes}/>
     </div>
   )
 }
