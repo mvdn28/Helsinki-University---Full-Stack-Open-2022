@@ -1,133 +1,191 @@
 import React from 'react';
 import { useState,useEffect } from 'react'
 import axios from 'axios'
+import phonebookService from './services/phonebook';
 
-const CountryShow= (props)=>{
-  let country = props.country
-  let show = props.show
-  let capital = country.capital
-  let lat = country.capitalInfo.latlng[0]
-  let lon = country.capitalInfo.latlng[1]
-  console.log(lat,lon)
-  let api = props.api
-  const hook = () => {
-    axios
-      .get('https://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+lon+'&appid='+api+'&units=metric')
-      .then(response => {
-        capital['temp']=response.data.main.temp
-        capital['wind']=response.data.wind.speed
-        capital['icon']="http://openweathermap.org/img/w/"+response.data.weather[0].icon+".png"
-      })
-  }
-  
-  useEffect(hook, [])
-  console.log(capital)
-    if(show){
-    return(
-      <><h1>{country.name.common}</h1>
-        <p>capital: {country.capital[0]}</p>
-        <p>area: {country.area}</p>
-        <h2>Languages:</h2>
-        <ul>
-          {Object.keys(country.languages).map(key =>{
-            return(
-              <li key={key}>{country.languages[key]}</li>
-            )
-          })}
-        </ul>
-        <img src={country.flags.png} alt={country.name}/>
-        <h1>Weather in {country.capital[0]}</h1>
-        <p>temperature: {capital.temp} Ceslsius </p>
-        <div><img src={capital.icon} id="icon"/></div>
-        <p>Wind: {capital.wind} m/s </p>
-        </>
-    )
-    }else{
-      return(
-        <>{country.name.common} {country.show}</>
-      )
-    }
+const Filter=(props)=>{
+
+  return(
+    <p>Filter shown with: <input onChange={props.handleChange} /></p>
+  )
 }
 
+const PersonForm = (props)=>{
+  let addNewPerson = props.handleSubmit
+  let newPerson=props.newPerson
+  let handlePersonChange=props.handleInputChange
 
+  return(
+    <form onSubmit={addNewPerson}>
+        <div>
+          <p>name: <input value={newPerson.name} onChange={handlePersonChange} name='name' /></p>
+          <p>number: <input value={newPerson.number} onChange={handlePersonChange} name='number' /></p>
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+  )
+}
+
+const Notification = ({ message }) => {
+  if (message === undefined) {
+    return null
+  }
+
+  return (
+    <div className='addedPerson'>
+      {message}
+    </div>
+  )
+}
+
+const ErrorNotification = ({ message }) => {
+  if (message === undefined) {
+    return null
+  }
+
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
+//------------------------------------------------------------------------------------------ Start of app -------------------------------------------
 const App = () => {
 
-  const [countries,setCountries]=useState([])
-  const [filteredList,setFilteredList]=useState(countries)
-  const api_key = process.env.REACT_APP_API_KEY
-  console.log(api_key)
+  const [persons, setPersons] = useState([]) 
+  const [newPerson, setNewPerson] = useState([{name:'',number:''}])
+  const [filteredList,setFilteredList]=useState(persons)
+  const [addMessage, setAddMessage] = useState()
+  const [errorMessage, setErrorMessage] = useState()
 
-  const hook = () => {
-    axios
-      .get('https://restcountries.com/v3.1/all')
-      .then(response => {
-        setCountries(response['data'])
+  useEffect(() => {
+    phonebookService
+      .getAll()
+      .then(initialPhonebook => {
+        setPersons(initialPhonebook)
+        setFilteredList(initialPhonebook)
       })
-  }
+  }, [])
   
-  useEffect(hook, [])
-
-  const handleCountryChange=(event)=>{
+  const handleListChange=(event)=>{
     const query = event.target.value;
     if(query.length>0){
-      let updatedList = [...countries];
-      updatedList=updatedList.filter((country) => country.name.common.indexOf(query) !== -1)
-      updatedList.map(country=>{
-        return(
-          country.show=false
-        )
-      })
+      let updatedList = [...persons];
+      updatedList=updatedList.filter((person) => person.name.indexOf(query) !== -1)
       setFilteredList(updatedList)
     }else{
-      setFilteredList(countries)
+      setFilteredList(persons)
+    }
+    
+  }
+  
+  const handlePersonChange = (event) => {
+    const { name, value } = event.target;
+    setNewPerson({
+      ...newPerson,
+      [name]: value,
+    });
+  }
+
+  function addNewPerson(event) {
+    event.preventDefault();
+    const personObject = {
+      name: newPerson.name,
+      number: newPerson.number
+    };
+    let updatedList = [...persons]
+
+    let checkName = persons.some(e => e.name === newPerson.name);
+    let checkNumber = persons.some(e => e.number === newPerson.number);
+
+    if (checkName) {
+      if(window.confirm(newPerson.name + ' is already added to the phonebook, replace the old numebr with a new one?')){
+        const person = persons.find(n => n.name === newPerson.name);
+        phonebookService
+          .update(person.id, personObject)
+          .then(returnedPhonebook=>{
+            setFilteredList(updatedList.map(p => p.name !== person.name ? p : returnedPhonebook ));
+            setNewPerson([{ name: '', number: '' }]);
+            event.target.reset();
+            setAddMessage(
+              `Modifyed ${person.name}'s number `
+            )
+            setTimeout(() => {
+              setAddMessage(undefined)
+            }, 5000)
+          })
+          .catch(error=>{
+            console.log(error)
+            setNewPerson([{ name: '', number: '' }]);
+            event.target.reset();
+            setErrorMessage(
+              `information of ${person.name} has already been removed from server `
+            )
+            setTimeout(() => {
+              setErrorMessage(undefined)
+            }, 5000)
+
+          })
+      }else{
+        setNewPerson([{ name: '', number: '' }]);
+        event.target.reset();
+      }
+      
+    } else {
+      phonebookService
+        .create(personObject)
+        .then(returnedPhonebook => {
+          setPersons(updatedList.concat(returnedPhonebook));
+          setFilteredList(updatedList.concat(returnedPhonebook));
+          setNewPerson([{ name: '', number: '' }]);
+          setAddMessage(
+            `Added ${personObject.name} `
+          )
+          setTimeout(() => {
+            setAddMessage(undefined)
+          }, 5000)
+        })
+      event.target.reset();
+    }
+  }
+
+  const deletePerson = (person) =>{
+    let updatedList = [...persons];
+    let id = person.id
+    if(window.confirm(`Delete ${person.name}`)){
+      phonebookService
+        .deletePerson(id)
+        .then(returnedPhonebook=>{
+          setFilteredList(updatedList=>updatedList.filter((u)=>u.id !== id));
+        })
     }
     
   }
 
-  function handleCountryShow(List,element){
-    const copy=[
-      ...List
-    ]
-    copy[element].show=!copy[element].show
-    setFilteredList(copy)
-    console.log(copy)
-  }
-  if (filteredList['data']!==undefined){
-    filteredList=filteredList['data']
-  }
-
-
-
-  if (filteredList.length===1){
-    let country=filteredList[0]
-    country.show=true
-    return(
-      <><p>
-        Find countries:
-        <input type="text" onChange={handleCountryChange}></input>
-      </p><CountryShow country={country} show={country.show} api={api_key} /></>
-    )
-  }else if(filteredList.length>1 && filteredList.length<=10){
-    return(
-      <><p>
-        Find countries: 
-        <input type="text" onChange={handleCountryChange}></input>
-      </p>
+  return (
+    <><div>
+      <h2>Phonebook</h2>
+      <Notification message={addMessage} />
+      <ErrorNotification message={errorMessage} />
+      <Filter handleChange={handleListChange}/>
+      <h3>Add a new</h3>
+      <PersonForm
+        handleSubmit={addNewPerson}
+        newPerson={newPerson}
+        handleInputChange={handlePersonChange}
+      />
+      <h2>Numbers</h2>
       <ul>
-        {filteredList.map((country, i) => 
-        <><li key={i}>
-        <button onClick={() => handleCountryShow(filteredList,i)}>{country.show ?'Hide':'Show'} {country.name.common}</button>
-        <CountryShow country={country} show={country.show} api={api_key} /></li></>)}
-      </ul></>
-    )
-  }else{
-    return(
-      <><p>
-        Find countries:
-        <input type="text" onChange={handleCountryChange}></input>
-      </p><p>Too many matches, specify another filter</p></>
-    )
-  }
+      {filteredList.map((person)=>
+        <><li key={person.id}>{person.name} {person.number} <button onClick={() => deletePerson(person)}>delete</button></li></>
+      )}
+    </ul>
+    </div>
+    </>
+  )
 }
 
 export default App
