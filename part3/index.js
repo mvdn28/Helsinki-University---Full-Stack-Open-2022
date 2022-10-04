@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+
 
 app.use(cors())
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
@@ -76,51 +78,21 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-    if(!body.content){
-        return response.status(404).json({
-            error: 'content missing'
-        })
-    }
-
-    const person = new Person ({
-        name: body.name,
-        number:body.number
-    })
-
-    person.save()
-      .then(savedPerson =>{
-        response.json(savedPerson)
-      })
-  /*const body = request.body
-
-  if(!body.name){
+  if(body.name===undefined){
       return response.status(404).json({
-          error: 'Name missing'
+          error: 'content missing'
       })
   }
 
-  if(!body.number){
-    return response.status(404).json({
-        error: 'Number missing'
-    })
-  }
-
-  let checkName = persons.some(e => e.name === body.name);
-
-  if(checkName){
-    return response.status(404).json({
-      error: 'Name already exists in the phonebook'
-  })
-  }
-
-  const person = {
+  const person = new Person ({
       name: body.name,
-      number: body.number,
-      id: entriesNow()+1,
-  }
+      number:body.number
+  })
 
-  persons = persons.concat(person)
-  response.json(person)*/
+  person.save()
+    .then(savedPerson =>{
+      response.json(savedPerson)
+    })
 })
 
 //--------------Middleware ----------------------
