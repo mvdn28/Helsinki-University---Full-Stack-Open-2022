@@ -76,6 +76,7 @@ app.delete('/api/persons/:id', (request, response) => {
 //--------------------------POST ---------------------------
 
 app.post('/api/persons', (request, response) => {
+  console.log(`It tryed to post`)
   const body = request.body
 
   if(body.name===undefined){
