@@ -14,36 +14,35 @@ const Person = mongoose.model('Person', phonebookSchema)
 if (process.argv.length <= 3) {
   mongoose
     .connect(url)
-    Person.find({}).then(result => {
-      result.forEach(person => {
-        console.log(person)
-      })
-      mongoose.connection.close()
+  Person.find({}).then(result => {
+    result.forEach(person => {
+      console.log(person)
     })
+    mongoose.connection.close()
+  })
 }else{
   const name = process.argv[3]
   const number = process.argv[4]
   mongoose
-  .connect(url)
-  .then((result) => {
-    console.log('connected')
+    .connect(url)
+    .then((result) => {
+      console.log('connected')
 
-    const person = new Person({
-      name: name,
-      number: number
+      const person = new Person({
+        name: name,
+        number: number
+      })
+
+      return person.save()
     })
 
-    return person.save()
-  })
-  
-  .then(() => {
-    console.log('person saved!')
-    return mongoose.connection.close()
-  })
-  .catch((err) => console.log(err))
+    .then(() => {
+      console.log('person saved!')
+      return mongoose.connection.close()
+    })
+    .catch((err) => console.log(err))
 }
 
 
 
 
-  
