@@ -13,8 +13,14 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-name: String,
-number: String
+  name: {
+    type:String,
+    minLength:3
+  },
+  number: {
+    type: String,
+    match: /^[0-9]{2,3}[-][0-9]{6,10000}$/
+  }
 })
 
 personSchema.set('toJSON', {
