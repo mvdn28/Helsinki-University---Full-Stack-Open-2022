@@ -19,7 +19,8 @@ const personSchema = new mongoose.Schema({
   },
   number: {
     type: String,
-    match: /^[0-9]{2,3}[-][0-9]{6,10000}$/
+    match: /^[0-9]{2,3}[-][0-9]{6,10000}$/,
+    minLength:8
   }
 })
 
