@@ -6,8 +6,8 @@ POST http://localhost:3003/api/blog HTTP/1.1
 Content-Type: application/json
 
 {
-    "title": "Segundo Blog",
+    "title": "Segundo Flamerda",
     "author": "Mauricio Nascimento",
-    "url": "/mvdn28",
-    "likes": 50000
+    "url": "www.vaitomarnocuflamengo.com",
+    "likes": 5
 }
