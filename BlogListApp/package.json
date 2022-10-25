@@ -4,9 +4,9 @@
   "description": "Blog List App",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest --verbose"    
   },
   "author": "mvdn28",
   "license": "ISC",
