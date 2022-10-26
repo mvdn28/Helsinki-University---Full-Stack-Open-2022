@@ -32,7 +32,7 @@ blogRouters.delete('/:id', async (request, response, next) => {
 
 blogRouters.put('/:id', async (request, response, next) => {
     const body = request.body
-  
+ 
     const updateBlog = {
         likes: body.likes
     }

@@ -8,10 +8,7 @@ const Blog = require('../models/blog')
 
 beforeEach(async() =>{
     await Blog.deleteMany({})
-    for(let blog of helper.initialBlogs){
-        let blogObject = new Blog(blog)
-        await blogObject.save()
-    }
+    await Blog.insertMany(helper.initialBlogs)
 })
 
 
@@ -114,14 +111,13 @@ describe('deletion of a blog', () => {
 describe('updating a blog', () => {
     test('succeeds with status 201 if id is valid', async () => {
         const blogsAtStart = await helper.blogsInDb()
-        console.log(blogsAtStart)
         const blogToUpdate = blogsAtStart[0]
         blogToUpdate.likes = -1
 
         await api
             .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(blogToUpdate)
             .expect(201)
-
         const blogsUpdated = await helper.blogsInDb()
         const likes = blogsUpdated.map(blog => blog.likes)
         expect(likes).toContain(-1)
