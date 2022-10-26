@@ -1,0 +1,96 @@
+const mongoose = require('mongoose')
+const supertest = require('supertest')
+const helper = require('./test_helper')
+const app = require('../app')
+
+const api = supertest(app)
+const Blog = require('../models/blog')
+
+beforeEach(async() =>{
+    await Blog.deleteMany({})
+    for(let blog of helper.initialBlogs){
+        let blogObject = new Blog(blog)
+        await blogObject.save()
+    }
+})
+
+
+test('2 blogs are returned as json', async () => {
+    await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type',/application\/json/)
+    const blogsAtDb = await helper.blogsInDb()
+    expect(blogsAtDb).toHaveLength(helper.initialBlogs.length)
+})
+
+test('Verify if blog id is defined', async () => {
+    const response = await api.get('/api/blogs')
+
+    const ids = response.body.map(r => r.id)
+
+    expect(ids).toBeDefined()
+})
+
+test('creating a new blog using method post', async ()=>{
+    const newBlog = {
+        title: "Test Blog",
+        author: "Test author",
+        url: "www.testblog.com",
+        likes:9,
+        __v:0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type',/application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length+1)
+
+    const titles = blogsAtEnd.map(r=>r.title)
+    expect(titles).toContain('Test Blog')
+})
+
+test('test if likes property is missing it defaults to 0', async ()=>{
+    const noLikeBlog = {
+        title: "No like Blog",
+        author: "No like author",
+        url: "www.nolikeblog.com",
+        __v:0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(noLikeBlog)
+        .expect(201)
+        .expect('Content-Type',/application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const likes = response.body.map(r => r.likes)
+
+    expect(likes).toBeDefined()
+})
+
+test('test if returns bad request when title or url not defined', async ()=>{
+    const noTitleOrUrlBlog = {
+        title:"teste",
+        author: "No like author",
+        like:7,
+        __v:0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(noTitleOrUrlBlog)
+        .expect(400)
+})
+
+
+
+afterAll(() =>{
+    mongoose.connection.close()
+})

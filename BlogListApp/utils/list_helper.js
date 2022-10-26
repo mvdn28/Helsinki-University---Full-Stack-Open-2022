@@ -30,13 +30,9 @@ const mostLikes = (blogs) => {
         }else{
             acc.push(curr)
         }
-        console.log(acc)
-        console.log(curr)
         return acc
     },[])
-    console.log(countAuthorLikes)
     const bloger = countAuthorLikes.sort((a,b)=>(a[1]<b[1]) ? 1:-1)
-    console.log(bloger)
     return{
         author:bloger[0][0],
         likes:bloger[0][1]
