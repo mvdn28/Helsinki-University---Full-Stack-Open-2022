@@ -1,13 +1,37 @@
-GET http://localhost:3003/api/blog
+GET http://localhost:3001/api/blogs
 
 ###
 
-POST http://localhost:3003/api/blog HTTP/1.1
+POST http://localhost:3001/api/blogs HTTP/1.1
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MzYwMTk5ZjVlNDNiZDYzMjdiM2ZmMGEiLCJpYXQiOjE2NjczMTY5MjR9.DiyahCjd-LQ-_TtdWwC9D1-T53TwyjIx3SGG4FSRJ3A
 
 {
     "title": "Segundo Flamerda",
     "author": "Mauricio Nascimento",
     "url": "www.vaitomarnocuflamengo.com",
-    "likes": 5
+    "likes": 9
 }
+
+###
+
+POST http://localhost:3001/api/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "mluukkai",
+    "name": "Matti Luukkaien",
+    "password": "salainen"
+}
+
+###
+POST http://localhost:3001/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username":"mluukkai",
+    "password":"salainen"
+}
+
+###
+DELETE http://localhost:3001/api/blogs/636022922d3a5fc53aa247ac HTTP/1.1

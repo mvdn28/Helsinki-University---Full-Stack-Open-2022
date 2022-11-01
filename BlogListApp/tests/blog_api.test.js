@@ -5,8 +5,23 @@ const app = require('../app')
 
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
+const { request } = require('../app')
 
 beforeEach(async() =>{
+    const passwordHash = await bcrypt.hash('sekret',10)
+    const user = new User({username:'root', passwordHash})
+    await user.save()
+
+    await request(app)
+        .post('/api/login')
+        .send({username:user.username,password:user.password})
+        .end((error,response) => {
+            request.token=response.body.token
+            done()
+        })
+
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
 })
@@ -15,6 +30,7 @@ beforeEach(async() =>{
 test('2 blogs are returned as json', async () => {
     await api
         .get('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .expect(200)
         .expect('Content-Type',/application\/json/)
     const blogsAtDb = await helper.blogsInDb()
