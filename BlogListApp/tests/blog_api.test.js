@@ -5,8 +5,28 @@ const app = require('../app')
 
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
+const { request } = require('../app')
 
-beforeEach(async() =>{
+var token = ''
+var password = '12345'
+beforeAll(async() =>{
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(password, saltRounds)
+    const user = new User({username:'root',name:'root name', passwordHash})
+    await User.deleteMany({})
+    await user.save()
+    console.log(user)
+
+    await api
+        .post('/api/login')
+        .send({username:user.username,password:password})
+        .expect('Content-Type',/application\/json/)
+        .then(response =>{
+            request.token =response.body.token
+        })
+
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
 })
@@ -40,6 +60,7 @@ test('creating a new blog using method post', async ()=>{
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type',/application\/json/)
@@ -86,27 +107,6 @@ test('test if returns bad request when title or url not defined', async ()=>{
         .expect(400)
 })
 
-describe('deletion of a blog', () => {
-    test('succeeds with status code 204 if id is valid', async () => {
-        const blogsAtStart = await helper.blogsInDb()
-        const blogToDelete = blogsAtStart[0]
-    
-        await api
-            .delete(`/api/blogs/${blogToDelete.id}`)
-            .expect(204)
-
-        const blogsAtEnd = await helper.blogsInDb()
-    
-        expect(blogsAtEnd).toHaveLength(
-            helper.initialBlogs.length - 1
-        )
-
-
-        const title = blogsAtEnd.map(r => r.title)
-
-        expect(title).not.toContain(blogToDelete.title)
-    })
-})
 
 describe('updating a blog', () => {
     test('succeeds with status 201 if id is valid', async () => {
