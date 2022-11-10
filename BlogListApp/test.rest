@@ -1,11 +1,11 @@
-GET http://localhost:3001/api/blogs
+GET http://localhost:3003/api/blogs
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MzYwMTk5ZjVlNDNiZDYzMjdiM2ZmMGEiLCJpYXQiOjE2NjgwMDUwMjh9.3qxTyo7rYMjiwBmwEHFGQt1rFeMZsxQHYsjNyZq5VvY
 
 ###
 
 POST http://localhost:3001/api/blogs HTTP/1.1
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MzYwMTk5ZjVlNDNiZDYzMjdiM2ZmMGEiLCJpYXQiOjE2NjczMTY5MjR9.DiyahCjd-LQ-_TtdWwC9D1-T53TwyjIx3SGG4FSRJ3A
-
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MzYwMTk5ZjVlNDNiZDYzMjdiM2ZmMGEiLCJpYXQiOjE2NjgwMDUwMjh9.3qxTyo7rYMjiwBmwEHFGQt1rFeMZsxQHYsjNyZq5VvY
 {
     "title": "Segundo Flamerda",
     "author": "Mauricio Nascimento",
@@ -25,7 +25,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3001/api/login HTTP/1.1
+POST http://localhost:3003/api/login HTTP/1.1
 Content-Type: application/json
 
 {
