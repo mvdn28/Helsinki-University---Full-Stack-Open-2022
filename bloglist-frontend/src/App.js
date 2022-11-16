@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
@@ -10,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
 
 
@@ -84,22 +83,19 @@ const App = () => {
     </form>      
   )
 
-  const handleCreate = async(event) => {
-    event.preventDefault()
+  const blogFormRef = useRef()
+
+  const addBlog = async(blogObject) => {
     try {
-      const blog = await blogService.createBlog({
-        title,author,url
-      })
-      setBlogs(blogs.concat(blog))
+      blogFormRef.current.toggleVisibility()
+      const blog = await blogService.createBlog(blogObject)
+      setBlogs(blogs.concat(blogObject))
       setErrorMessage(
         `a new blog: ${blog.title} by ${blog.author}`
       )
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-      setAuthor('')
-      setTitle('')
-      setUrl('')
     } catch (exception) {
       setErrorMessage('Blog with problem')
       setTimeout(() => {
@@ -108,24 +104,24 @@ const App = () => {
     }
   }
 
-  const createNewForm = () => (
-    <form onSubmit={handleCreate}>
-      <div>
-        title: 
-        <input type="text" value={title} name="Title" onChange={({target}) => setTitle(target.value)}/>
-      </div>
-      <div>
-        author: 
-        <input type="text" value={author} name="Author" onChange={({target}) => setAuthor(target.value)}/>
-      </div>
-      <div>
-        url: 
-        <input type="text" value={url} name="Url" onChange={({target}) => setUrl(target.value)}/>
-      </div>
-      <button type='submit'>create</button>
-    </form>
-  )
-
+  const modifyBlog = async(blogObject) => {
+    try {
+      const blog = await blogService.modifyBlog(blogObject)
+      const editedBlogs = await blogService.getAll()
+      setBlogs(editedBlogs)
+      setErrorMessage(
+        `a new blog: ${blog.title} by ${blog.author}`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setErrorMessage('Blog with problem')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
 
   return (
     <div>
@@ -143,11 +139,13 @@ const App = () => {
         </div>
         <div>
           <h2>create new</h2>
-          {createNewForm()}
+          <Togglable buttonLabel='create blog' ref={blogFormRef}>
+            <BlogForm createBlog={addBlog}/>
+          </Togglable>
         </div>
         <div>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} editBlog={modifyBlog}/>
           )}
         </div>
       </div>
