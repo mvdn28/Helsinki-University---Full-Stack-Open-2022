@@ -40,17 +40,15 @@ const modifyBlog = async(newObject) => {
 
 }
 
-const deleteBlog = async(id) => {
-  const IdUrl=`${baseUrl}/${id}`
+const deleteBlog = async(Object) => {
+  console.log(Object)
+  const IdUrl=`${baseUrl}/${Object.id}`
   console.log(IdUrl)
   const config = {
-    headers: { Authorization: token },
+    headers: { Authorization: token }
   }
-
   const response = await axios.delete(IdUrl, config)
   console.log(response)
-  return response.data
-
 }
 
 

@@ -33,8 +33,10 @@ blogRouters.post('/', async (request, response) => {
 blogRouters.delete('/:id', async (request, response, next) => {
     const user = request.userfound
     const blog = await Blog.findById(request.params.id)
-    console.log('here')
+    console.log(request.params.id)
     if (blog.user.toString() === user._id.toString()){
+        console.log()
+        await Blog.findByIdAndRemove(request.params.id)
         response.status(204).end()
     }else{
         response.status(401).json({ error: 'blog user does not match logged user' })

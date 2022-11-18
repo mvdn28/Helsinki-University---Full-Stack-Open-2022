@@ -18,6 +18,7 @@ const App = () => {
   useEffect(() => {
     const fetch = async () => {
       const loggedUserJSON = window.localStorage.getItem('loggedBlogListappUser')
+      console.log(loggedUserJSON)
       if (loggedUserJSON) {
         const user = await JSON.parse(loggedUserJSON)
         setUser(user)
@@ -126,7 +127,7 @@ const App = () => {
   const deleteBlog = async(blogToDelete) => {
     try {
       window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`) &&
-        await blogService.deleteBlog(blogToDelete.id)
+        await blogService.deleteBlog(blogToDelete)
       const currentBlogs = await blogService.getAll()
       setBlogs(currentBlogs)
       setErrorMessage(
