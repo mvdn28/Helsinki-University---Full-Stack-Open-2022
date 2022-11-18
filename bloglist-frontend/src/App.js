@@ -18,12 +18,13 @@ const App = () => {
   useEffect(() => {
     const fetch = async () => {
       const loggedUserJSON = window.localStorage.getItem('loggedBlogListappUser')
+      console.log(loggedUserJSON)
       if (loggedUserJSON) {
         const user = await JSON.parse(loggedUserJSON)
         setUser(user)
         blogService.setToken(user.token)
         const blogs = await blogService.getAll()
-        console.log(blogs)
+        blogs.sort((a,b)=> b.likes - a.likes)
         setBlogs(blogs)
       }
     }
@@ -110,13 +111,33 @@ const App = () => {
       const editedBlogs = await blogService.getAll()
       setBlogs(editedBlogs)
       setErrorMessage(
-        `a new blog: ${blog.title} by ${blog.author}`
+        `a new like in blog: ${blog.title} by ${blog.author}`
       )
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     } catch (exception) {
-      setErrorMessage('Blog with problem')
+      setErrorMessage('Like not processed')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  const deleteBlog = async(blogToDelete) => {
+    try {
+      window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`) &&
+        await blogService.deleteBlog(blogToDelete)
+      const currentBlogs = await blogService.getAll()
+      setBlogs(currentBlogs)
+      setErrorMessage(
+        `a deleted blog: ${blogToDelete.title} by ${blogToDelete.author}`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setErrorMessage('Blog not deleted')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -145,7 +166,7 @@ const App = () => {
         </div>
         <div>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} editBlog={modifyBlog}/>
+            <Blog key={blog.id} blog={blog} editBlog={modifyBlog} deleteBlog={deleteBlog} user={user}/>
           )}
         </div>
       </div>
