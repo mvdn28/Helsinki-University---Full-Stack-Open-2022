@@ -1,18 +1,17 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-const Blog = ({blog, editBlog}) => {
+const Blog = ({ blog, editBlog }) => {
   const [visible, setVisible] = useState(false)
   const [addLike,setAddLike] = useState(blog.likes)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
-  
   const toggleVisibility = () => {
     setVisible(!visible)
     console.log(blog)
   }
 
-  const blogEdit = (event) =>{
+  const blogEdit = (event) => {
     const addLike = blog.likes+1
     console.log(addLike)
     editBlog({
@@ -25,7 +24,6 @@ const Blog = ({blog, editBlog}) => {
     })
     setAddLike('')
   }
-  
   const blogStyle = {
     paddingTop: 10,
     paddingLeft:2,
@@ -39,13 +37,12 @@ const Blog = ({blog, editBlog}) => {
         {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
       </div>
       <div style={showWhenVisible}>
-        <div>{blog.title} <button onClick={toggleVisibility}>hide</button></div>  
+        <div>{blog.title} <button onClick={toggleVisibility}>hide</button></div>
         <div>{blog.url}</div>
         <div>likes: {blog.likes} <button onClick={blogEdit}>like</button></div>
         <div>{blog.author}</div>
-      </div> 
+      </div>
     </div>
-   
-)}
-
+  )
+}
 export default Blog
