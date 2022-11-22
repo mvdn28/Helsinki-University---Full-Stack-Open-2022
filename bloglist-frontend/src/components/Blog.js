@@ -33,13 +33,13 @@ const Blog = ({ blog, editBlog }) => {
   }
   return(
     <div style={blogStyle} key={blog.id}>
-      <div style={hideWhenVisible}>
+      <div style={hideWhenVisible} className='blog-default' >
         {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='blog-clicked'>
         <div>{blog.title} <button onClick={toggleVisibility}>hide</button></div>
-        <div>{blog.url}</div>
-        <div>likes: {blog.likes} <button onClick={blogEdit}>like</button></div>
+        <div className='blog-url'>{blog.url}</div>
+        <div className='blog-likes'>likes: {blog.likes} <button className='like-button' onClick={blogEdit}>like</button></div>
         <div>{blog.author}</div>
       </div>
     </div>
