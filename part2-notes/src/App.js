@@ -35,14 +35,13 @@ const App = () => {
   }, [])
 
   const handleLogin = async(loginObj) => {
-    
     try {
       const user = await loginService.login({
         username:loginObj.username,password:loginObj.password
       })
       window.localStorage.setItem(
         'loggedNoteappUser', JSON.stringify(user)
-      ) 
+      )
       noteService.setToken(user.token)
       setUser(user)
     } catch (exception) {
@@ -57,7 +56,6 @@ const App = () => {
   const toggleImportanceOf = id => {
     const note = notes.find(n => n.id === id)
     const changedNote = { ...note, important: !note.important }
-  
     noteService
       .update(id, changedNote)
       .then(returnedNote => {
@@ -79,7 +77,7 @@ const App = () => {
     noteFormRef.current.toggleVisibility()
     noteService
       .create(noteObject)
-      .then(returnedNote => {     
+      .then(returnedNote => {
         setNotes(notes.concat(returnedNote))
       })
   }
@@ -96,12 +94,12 @@ const App = () => {
       <Notification message={errorMessage} />
 
       {user === null ?
-      <Togglable buttonLabel='login'>
-        <LoginForm login={handleLogin} />
-      </Togglable> :
-      <div>
-        <p>{user.name} logged-in</p>
-      </div>
+        <Togglable buttonLabel = 'login'>
+          <LoginForm login = {handleLogin} />
+        </Togglable> :
+        <div>
+          <p>{user.name} logged-in</p>
+        </div>
       }
 
       <Togglable buttonLabel="new note" ref={noteFormRef}>
@@ -114,10 +112,10 @@ const App = () => {
         </button>
       </div>
       <ul>
-        {notesToShow.map((note, i) => 
+        {notesToShow.map((note, i) =>
           <Note
             key={i}
-            note={note} 
+            note={note}
             toggleImportance={() => toggleImportanceOf(note.id)}
           />
         )}
