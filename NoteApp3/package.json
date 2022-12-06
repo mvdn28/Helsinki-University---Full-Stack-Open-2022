@@ -25,7 +25,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.4",
     "morgan": "^1.10.0",
-    "negotiator": "^0.6.3"
+    "negotiator": "^0.6.3",
+    "prop-types": "^15.8.1"
   },
   "devDependencies": {
     "-": "^0.0.1",

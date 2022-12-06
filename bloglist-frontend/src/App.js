@@ -9,8 +9,8 @@ import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
@@ -33,14 +33,13 @@ const App = () => {
 
   const handleLogin = async(event) => {
     event.preventDefault()
-    
     try {
       const user = await loginService.login({
         username, password,
       })
       window.localStorage.setItem(
         'loggedBlogListappUser', JSON.stringify(user)
-      ) 
+      )
 
       blogService.setToken(user.token)
       setUser(user)
@@ -64,7 +63,7 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -73,7 +72,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -81,7 +80,7 @@ const App = () => {
         />
       </div>
       <button type="submit">login</button>
-    </form>      
+    </form>
   )
 
   const blogFormRef = useRef()
@@ -147,23 +146,30 @@ const App = () => {
   return (
     <div>
       {user === null ?
-      <div>
-        <h2> log in to application</h2>
-        <Notification message={errorMessage} state={'error'} />
-        {loginForm()} 
-      </div> :
-      <div>
         <div>
-          <h2>blogs</h2>
-          <Notification message={errorMessage} state={'success'}/>
-          <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-        </div>
+          <h2> log in to application</h2>
+          <Notification message={errorMessage} state={'error'} />
+          {loginForm()}
+        </div> :
         <div>
-          <h2>create new</h2>
-          <Togglable buttonLabel='create blog' ref={blogFormRef}>
-            <BlogForm createBlog={addBlog}/>
-          </Togglable>
+          <div>
+            <h2>blogs</h2>
+            <Notification message={errorMessage} state={'success'}/>
+            <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+          </div>
+          <div>
+            <h2>create new</h2>
+            <Togglable buttonLabel='create blog' ref={blogFormRef}>
+              <BlogForm createBlog={addBlog}/>
+            </Togglable>
+          </div>
+          <div>
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} editBlog={modifyBlog}/>
+            )}
+          </div>
         </div>
+<<<<<<< HEAD
         <div>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} editBlog={modifyBlog} deleteBlog={deleteBlog} user={user}/>
@@ -171,8 +177,10 @@ const App = () => {
         </div>
       </div>
       }    
+=======
+      }
+>>>>>>> 9b17cea6668bea1e50dff424d009c7faf47d1411
     </div>
   )
 }
-
 export default App

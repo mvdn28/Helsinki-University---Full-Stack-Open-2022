@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const Blog = ({blog, editBlog, deleteBlog, user}) => {
   const [visible, setVisible] = useState(false)
@@ -6,13 +6,12 @@ const Blog = ({blog, editBlog, deleteBlog, user}) => {
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
-  
   const toggleVisibility = () => {
     setVisible(!visible)
 
   }
 
-  const blogEdit = (event) =>{
+  const blogEdit = (event) => {
     const addLike = blog.likes+1
     editBlog({
       _id: blog.id,
@@ -38,20 +37,19 @@ const Blog = ({blog, editBlog, deleteBlog, user}) => {
   }
   return(
     <div style={blogStyle} key={blog.id}>
-      <div style={hideWhenVisible}>
+      <div style={hideWhenVisible} className='blog-default' >
         {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
       </div>
-      <div style={showWhenVisible}>
-        <div>{blog.title} <button onClick={toggleVisibility}>hide</button></div>  
-        <div>{blog.url}</div>
-        <div>likes: {blog.likes} <button onClick={blogEdit}>like</button></div>
+      <div style={showWhenVisible} className='blog-clicked'>
+        <div>{blog.title} <button onClick={toggleVisibility}>hide</button></div>
+        <div className='blog-url'>{blog.url}</div>
+        <div className='blog-likes'>likes: {blog.likes} <button className='like-button' onClick={blogEdit}>like</button></div>
         <div>{blog.author}</div>
         {blog.user.username===user.username &&
           <div><button onClick={blogDelete}>delete</button></div>
         }
       </div> 
     </div>
-   
-)}
-
+  )
+}
 export default Blog
