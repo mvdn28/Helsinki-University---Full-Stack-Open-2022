@@ -98,7 +98,7 @@ const App = () => {
           <LoginForm login = {handleLogin} />
         </Togglable> :
         <div>
-          <p>{user.name} logged-in</p>
+          <p>{user.name} logged in</p>
         </div>
       }
 

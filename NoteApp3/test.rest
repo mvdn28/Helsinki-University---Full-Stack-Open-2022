@@ -16,17 +16,17 @@ DELETE http://localhost:3001/api/notes/633c49792d8614626095c18a
 
 ###
 
-POST http://localhost:3001/api/users HTTP/1.1
+POST http://localhost:3003/api/users HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "mluukkai",
+    "username": "maumau",
     "name": "Matti Luukkaien",
-    "password": "salainen"
+    "password": "teste123"
 }
 
 ###
-POST http://localhost:3001/api/login HTTP/1.1
+POST http://localhost:3003/api/login HTTP/1.1
 Content-Type: application/json
 
 {

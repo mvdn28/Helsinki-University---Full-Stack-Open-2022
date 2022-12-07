@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({blog, editBlog, deleteBlog, user}) => {
+const Blog = ({ blog, editBlog, deleteBlog, user }) => {
   const [visible, setVisible] = useState(false)
   const [addLike,setAddLike] = useState(blog.likes)
 

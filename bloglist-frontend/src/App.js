@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -18,13 +19,12 @@ const App = () => {
   useEffect(() => {
     const fetch = async () => {
       const loggedUserJSON = window.localStorage.getItem('loggedBlogListappUser')
-      console.log(loggedUserJSON)
       if (loggedUserJSON) {
         const user = await JSON.parse(loggedUserJSON)
         setUser(user)
         blogService.setToken(user.token)
         const blogs = await blogService.getAll()
-        blogs.sort((a,b)=> b.likes - a.likes)
+        console.log(blogs)
         setBlogs(blogs)
       }
     }
@@ -110,33 +110,13 @@ const App = () => {
       const editedBlogs = await blogService.getAll()
       setBlogs(editedBlogs)
       setErrorMessage(
-        `a new like in blog: ${blog.title} by ${blog.author}`
+        `a new blog: ${blog.title} by ${blog.author}`
       )
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     } catch (exception) {
-      setErrorMessage('Like not processed')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  }
-
-  const deleteBlog = async(blogToDelete) => {
-    try {
-      window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`) &&
-        await blogService.deleteBlog(blogToDelete)
-      const currentBlogs = await blogService.getAll()
-      setBlogs(currentBlogs)
-      setErrorMessage(
-        `a deleted blog: ${blogToDelete.title} by ${blogToDelete.author}`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    } catch (exception) {
-      setErrorMessage('Blog not deleted')
+      setErrorMessage('Blog with problem')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -165,21 +145,11 @@ const App = () => {
           </div>
           <div>
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} editBlog={modifyBlog}/>
+              <Blog key={blog.id} blog={blog} editBlog={modifyBlog} user={user}/>
             )}
           </div>
         </div>
-<<<<<<< HEAD
-        <div>
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} editBlog={modifyBlog} deleteBlog={deleteBlog} user={user}/>
-          )}
-        </div>
-      </div>
-      }    
-=======
       }
->>>>>>> 9b17cea6668bea1e50dff424d009c7faf47d1411
     </div>
   )
 }
