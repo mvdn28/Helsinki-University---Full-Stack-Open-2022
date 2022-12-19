@@ -46,10 +46,7 @@ const Blog = ({ blog, editBlog, deleteBlog, user }) => {
         {blog.user.username===user.username &&
           <div><button className='delete-button' onClick={blogDelete}>delete</button></div>
         }
-        {blog.user.username===user.username &&
-          <div><button onClick={blogDelete}>delete</button></div>
-        }
-      </div> 
+      </div>
     </div>
   )
 }
