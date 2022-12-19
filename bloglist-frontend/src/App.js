@@ -67,6 +67,7 @@ const App = () => {
           type="text"
           value={username}
           name="Username"
+          className='username-input'
           onChange={({ target }) => setUsername(target.value)}
         />
       </div>
@@ -76,6 +77,7 @@ const App = () => {
           type="password"
           value={password}
           name="Password"
+          className='password-input'
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
@@ -98,6 +100,26 @@ const App = () => {
       }, 5000)
     } catch (exception) {
       setErrorMessage('Blog with problem')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  const deleteBlog = async(blogToDelete) => {
+    try {
+      window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`) &&
+        await blogService.deleteBlog(blogToDelete)
+      const currentBlogs = await blogService.getAll()
+      setBlogs(currentBlogs)
+      setErrorMessage(
+        `a deleted blog: ${blogToDelete.title} by ${blogToDelete.author}`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setErrorMessage('Blog not deleted')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -144,8 +166,8 @@ const App = () => {
             </Togglable>
           </div>
           <div>
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} editBlog={modifyBlog} user={user}/>
+            {blogs.sort((a,b) => a.likes>b.likes ? -1 : 1 ).map(blog =>
+              <Blog key={blog.id} blog={blog} editBlog={modifyBlog} user={user} deleteBlog={deleteBlog} user={user}/>
             )}
           </div>
         </div>

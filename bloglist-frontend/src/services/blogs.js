@@ -39,7 +39,6 @@ const modifyBlog = async(newObject) => {
   return response.data
 
 }
-
 const deleteBlog = async(Object) => {
   console.log(Object)
   const IdUrl=`${baseUrl}/${Object.id}`
@@ -52,5 +51,5 @@ const deleteBlog = async(Object) => {
 }
 
 
+export default { getAll, setToken, createBlog, modifyBlog,deleteBlog }
 
-export default { getAll, setToken, createBlog, modifyBlog, deleteBlog }

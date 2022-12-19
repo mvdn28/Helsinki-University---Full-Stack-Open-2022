@@ -2,16 +2,15 @@ import { useState } from 'react'
 
 const Blog = ({ blog, editBlog, deleteBlog, user }) => {
   const [visible, setVisible] = useState(false)
-  const [addLike,setAddLike] = useState(blog.likes)
+  const [,setAddLike] = useState(blog.likes)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
   const toggleVisibility = () => {
     setVisible(!visible)
-
   }
 
-  const blogEdit = (event) => {
+  const blogEdit = () => {
     const addLike = blog.likes+1
     editBlog({
       _id: blog.id,
@@ -24,10 +23,9 @@ const Blog = ({ blog, editBlog, deleteBlog, user }) => {
     setAddLike('')
   }
 
-  const blogDelete = (event) => {
+  const blogDelete = () => {
     deleteBlog(blog)
   }
-  
   const blogStyle = {
     paddingTop: 10,
     paddingLeft:2,
@@ -36,15 +34,18 @@ const Blog = ({ blog, editBlog, deleteBlog, user }) => {
     marginBottom:5
   }
   return(
-    <div style={blogStyle} key={blog.id}>
+    <div style={blogStyle} key={blog.id} className="blog">
       <div style={hideWhenVisible} className='blog-default' >
-        {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
+        {blog.title} {blog.author} <button onClick={toggleVisibility} className='view-button'>view</button>
       </div>
       <div style={showWhenVisible} className='blog-clicked'>
         <div>{blog.title} <button onClick={toggleVisibility}>hide</button></div>
         <div className='blog-url'>{blog.url}</div>
         <div className='blog-likes'>likes: {blog.likes} <button className='like-button' onClick={blogEdit}>like</button></div>
         <div>{blog.author}</div>
+        {blog.user.username===user.username &&
+          <div><button className='delete-button' onClick={blogDelete}>delete</button></div>
+        }
         {blog.user.username===user.username &&
           <div><button onClick={blogDelete}>delete</button></div>
         }
