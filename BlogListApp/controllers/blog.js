@@ -23,6 +23,7 @@ blogRouters.post('/', async (request, response) => {
     const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     if(savedBlog.title && savedBlog.url){
+        console.log(savedBlog)
         response.status(201).json(savedBlog)
     }else{
         response.status(400).end()
@@ -31,15 +32,16 @@ blogRouters.post('/', async (request, response) => {
 })
 
 blogRouters.delete('/:id', async (request, response, next) => {
-    const user = request.userfound
-    const blog = await Blog.findById(request.params.id)
-    console.log('here')
-    if (blog.user.toString() === user._id.toString()){
-        response.status(204).end()
-    }else{
-        response.status(401).json({ error: 'blog user does not match logged user' })
+    try{
+        const user = request.userfound
+        const blog = await Blog.findById(request.params.id)
+        if (blog.user.toString() === user._id.toString()){
+            await Blog.findByIdAndRemove(request.params.id)
+            return response.status(204).end()
+        }
+    }catch{
+        return response.status(401).json({ error: 'blog user does not match logged user' })
     }
-    
 })
 
 blogRouters.put('/:id', async (request, response, next) => {

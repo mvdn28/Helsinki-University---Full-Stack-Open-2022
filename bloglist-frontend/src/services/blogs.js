@@ -39,7 +39,17 @@ const modifyBlog = async(newObject) => {
   return response.data
 
 }
+const deleteBlog = async(Object) => {
+  console.log(Object)
+  const IdUrl=`${baseUrl}/${Object.id}`
+  console.log(IdUrl)
+  const config = {
+    headers: { Authorization: token }
+  }
+  const response = await axios.delete(IdUrl, config)
+  console.log(response)
+}
 
 
 
-export default { getAll, setToken, createBlog, modifyBlog }
+export default { getAll, setToken, createBlog, modifyBlog,deleteBlog }
